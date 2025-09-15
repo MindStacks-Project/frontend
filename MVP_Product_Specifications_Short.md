@@ -73,20 +73,22 @@ Indexes on `attempt_events(attempt_id, t_ms_from_start)` and `puzzles(type, diff
 ---
 
 ## 9) API Surface (MVP)
+
 **Base:** `https://api.mindstacks.app/v1`
 
 - **POST** `/auth/signup` → `{ user_id }`  
 - **POST** `/auth/login` → `{ token }` (JWT)  
 - **GET** `/puzzles?type=&difficulty=&limit=&cursor=` → list (sanitized)  
 - **POST** `/attempts` `{ puzzle_id }` → `{ attempt_id, ui_payload }`  
-- **POST** `/attempts/:id/events` `{ events:[...] }` → `202`  
+- **POST** `/attempts/:id/events` `{ events: [...] }` → `202`  
 - **POST** `/attempts/:id/submit` `{ final_answer }` → `{ outcome, score, duration_ms }`  
 - **POST** `/puzzles/:id/hints` `{ attempt_id }` → `{ hint_payload, cost }`  
 - **GET** `/me/progress` → XP, streak, badges  
 - **GET** `/leaderboard/daily?date=` → daily leaderboard  
 - **GET** `/exports` (B2B, API key) → list + signed URLs
 
-**Event (canonical)**
+### Event (canonical)
+
 ```json
 {
   "t_ms_from_start": 1530,
@@ -94,39 +96,49 @@ Indexes on `attempt_events(attempt_id, t_ms_from_start)` and `puzzles(type, diff
   "delta_payload": { "cell": "R5C7", "value": 3 },
   "ui_state_hash": "a1b2c3"
 }
+```
 
 ---
 
-##  11) Tech Stack
+## 10) Scoring & Badges (simple)
 
-**Frontend:** Next.js (React + TS), Tailwind, React Query/Zustand, PostHog (analytics)
-**Backend:** AdonisJS 6 (Node/TS), PostgreSQL (Neon/Supabase), Redis (jobs), AWS S3 (exports), OpenTelemetry/Sentry (observability)
+**Score** = base(difficulty) + time bonus − (hint_cost × hints) − (mistake_penalty × mistakes) + first‑try bonus.
+**Badges:** No‑Hints, Accuracy ≥95%, 7‑day streak, Speedster (p95 time), Strategist (low error rate).
+
+---
+
+## 11) Tech Stack
+
+**Frontend:** Next.js (React + TS), Tailwind, React Query/Zustand, PostHog (analytics)  
+**Backend:** AdonisJS 6 (Node/TS), PostgreSQL (Neon/Supabase), Redis (jobs), AWS S3 (exports), OpenTelemetry/Sentry (observability)  
 **DevOps:** Docker, GitHub Actions (lint/test/migrate), Vercel (FE), Fly/Render (BE), secrets via platform
 
 ---
 
-##  12) Metrics & Milestones
+## 12) Metrics & Milestones
 
-**Success (MVP)**: D1 attempts ≥200; completion ≥55%; opt-in ≥70%; avg events/attempt ≥25; export SLA <24h
+**Success (MVP):** D1 attempts ≥ 200; completion ≥ 55%; opt-in ≥ 70%; avg events/attempt ≥ 25; export SLA < 24h
 
-Timeline (8 weeks)
-	1.	FE shell + auth + first puzzle (Sudoku), DB & events ingest
-	2.	Submit/eval + scoring/badges + analytics counters
-	3.	Add Wordle-style + Nonogram/Crossword; hints; leaderboards
-	4.	Nightly export + admin; privacy pass; load tests; pilot
+**Timeline (8 weeks)**  
+1. FE shell + auth + first puzzle (Sudoku), DB & events ingest  
+2. Submit/eval + scoring/badges + analytics counters  
+3. Add Wordle-style + Nonogram/Crossword; hints; leaderboards  
+4. Nightly export + admin; privacy pass; load tests; pilot
 
 ---
 
 ## 13) Risks & Mitigations
-	•	**PII leakage** → constrained inputs, client redaction, server filters
-	•	**Bot/low-quality data** → anomaly detection; minimum dwell thresholds; server-side validation
-	•	**Third-party availability** → cache puzzles; keep fallback generators for key types
-	•	**Scope creep** → limit to 3–4 puzzle types; defer UGC/payments
+
+- **PII leakage** → constrained inputs, client redaction, server filters  
+- **Bot/low-quality data** → anomaly detection; minimum dwell thresholds; server-side validation  
+- **Third-party availability** → cache puzzles; keep fallback generators for key types  
+- **Scope creep** → limit to 3–4 puzzle types; defer UGC/payments
 
 ---
 
 ## 14) Appendix — Export Row (events, v1)
-`
+
+```json
 {
   "export_date": "2025-09-14",
   "user_id": "u_3b9f…",
@@ -139,4 +151,4 @@ Timeline (8 weeks)
   "delta": { "cell": "R5C7", "value": 3 },
   "client": { "ver": "1.0.0", "device": "desktop" }
 }
-`
+```
