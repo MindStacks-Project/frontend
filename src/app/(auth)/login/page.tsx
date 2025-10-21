@@ -1,7 +1,25 @@
-import { LoginForm } from "@/components/auth/login-form";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoginForm } from "@/components/auth/login-form";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [loading, user, router]);
+
+  if (user) {
+    return null;
+  }
+
   return (
     <>
       <div className="text-center mb-4">

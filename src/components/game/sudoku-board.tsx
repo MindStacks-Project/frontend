@@ -7,6 +7,7 @@ type Cell = { row: number; col: number };
 interface SudokuBoardProps {
   board: number[][];
   initialBoard: number[][];
+  solution: number[][];
   selectedCell: Cell | null;
   onCellSelect: (cell: Cell | null) => void;
   onCellValueChange: (row: number, col: number, value: number) => void;
@@ -15,6 +16,7 @@ interface SudokuBoardProps {
 export function SudokuBoard({
   board,
   initialBoard,
+  solution,
   selectedCell,
   onCellSelect,
   onCellValueChange,
@@ -90,7 +92,7 @@ export function SudokuBoard({
                   isInitial ? "text-foreground" : "text-primary",
                   !isInitial &&
                     cell !== 0 &&
-                    puzzle.solution[rowIndex][colIndex] !== cell &&
+                    solution[rowIndex][colIndex] !== cell &&
                     "text-destructive"
                 )}
               />
@@ -101,8 +103,3 @@ export function SudokuBoard({
     </div>
   );
 }
-
-// Dummy puzzle object to satisfy TS compiler in the style expression
-const puzzle = {
-  solution: Array(9).fill(Array(9).fill(0)),
-};

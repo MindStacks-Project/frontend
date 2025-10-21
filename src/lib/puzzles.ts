@@ -1,10 +1,10 @@
-import type { Puzzle } from '@/lib/types';
+import type { Puzzle } from "@/lib/types";
 
 export const puzzles: Puzzle[] = [
   {
-    id: 'sudoku-easy-1',
-    type: 'sudoku',
-    difficulty: 'easy',
+    id: "sudoku-easy-1",
+    type: "sudoku",
+    difficulty: "easy",
     initialState: [
       [5, 3, 0, 0, 7, 0, 0, 0, 0],
       [6, 0, 0, 1, 9, 5, 0, 0, 0],
@@ -27,12 +27,12 @@ export const puzzles: Puzzle[] = [
       [2, 8, 7, 4, 1, 9, 6, 3, 5],
       [3, 4, 5, 2, 8, 6, 1, 7, 9],
     ],
-    source: 'Community',
+    source: "Community",
   },
   {
-    id: 'sudoku-medium-1',
-    type: 'sudoku',
-    difficulty: 'medium',
+    id: "sudoku-medium-1",
+    type: "sudoku",
+    difficulty: "medium",
     initialState: [
       [0, 2, 0, 6, 0, 8, 0, 0, 0],
       [5, 8, 0, 0, 0, 9, 7, 0, 0],
@@ -55,12 +55,12 @@ export const puzzles: Puzzle[] = [
       [7, 1, 9, 8, 5, 2, 4, 3, 6],
       [2, 4, 5, 3, 9, 6, 1, 8, 7],
     ],
-    source: 'AI Generated',
+    source: "AI Generated",
   },
   {
-    id: 'sudoku-hard-1',
-    type: 'sudoku',
-    difficulty: 'hard',
+    id: "sudoku-hard-1",
+    type: "sudoku",
+    difficulty: "hard",
     initialState: [
       [8, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 3, 6, 0, 0, 0, 0, 0],
@@ -83,10 +83,81 @@ export const puzzles: Puzzle[] = [
       [4, 3, 8, 5, 2, 6, 9, 1, 7],
       [7, 9, 6, 3, 1, 8, 4, 5, 2],
     ],
-    source: 'Puzzle Master',
-  }
+    source: "Puzzle Master",
+  },
+  {
+    id: "wordle-easy-1",
+    type: "wordle",
+    difficulty: "easy",
+    solution: "APPLE",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "Community",
+  },
+  {
+    id: "wordle-medium-1",
+    type: "wordle",
+    difficulty: "medium",
+    solution: "BRAVE",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "Instructor Picks",
+  },
+  {
+    id: "wordle-hard-1",
+    type: "wordle",
+    difficulty: "hard",
+    solution: "CRYPT",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "AI Generated",
+  },
+  {
+    id: "sokoban-easy-1",
+    type: "sokoban",
+    difficulty: "easy",
+    layout: [
+      "  #####",
+      "###  .#",
+      "# $ $ #",
+      "# .@  #",
+      "###  .#",
+      "  #####",
+    ],
+    source: "Warehouse Classics",
+  },
+  {
+    id: "sokoban-medium-1",
+    type: "sokoban",
+    difficulty: "medium",
+    layout: [
+      " #######",
+      " #  .  #",
+      " # ##$##",
+      " #  $  #",
+      "##$#. .#",
+      "#   @  #",
+      "####### ",
+    ],
+    source: "Community Remix",
+  },
+  {
+    id: "sokoban-hard-1",
+    type: "sokoban",
+    difficulty: "hard",
+    layout: [
+      "#########",
+      "#.  #   #",
+      "#$$## #.#",
+      "# .@$ $ #",
+      "#  ##$  #",
+      "#..   ###",
+      "#########",
+    ],
+    source: "Retro Vault",
+  },
 ];
 
 export const getPuzzleById = (id: string): Puzzle | undefined => {
-  return puzzles.find(p => p.id === id);
-}
+  return puzzles.find((p) => p.id === id);
+};

@@ -1,7 +1,25 @@
-import { SignUpForm } from "@/components/auth/signup-form";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SignUpForm } from "@/components/auth/signup-form";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function SignUpPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [loading, user, router]);
+
+  if (user) {
+    return null;
+  }
+
   return (
     <>
       <div className="text-center mb-4">
