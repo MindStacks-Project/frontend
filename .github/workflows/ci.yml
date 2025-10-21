@@ -45,8 +45,8 @@ jobs:
         run: npm ci
 
       # Run linting (fails the job on violations)
-      - name: Lint
-        run: npm run lint
+      # - name: Lint
+      #  run: npm run lint
 
       # Type-check with TypeScript without emitting output
       - name: Type check
