@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-landing",
+      "description": "Abstract image of a brain or network, representing intelligence and puzzles.",
+      "imageUrl": "https://images.unsplash.com/photo-1674027444474-e63f9d516f92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxicmFpbiUyMG5ldHdvcmt8ZW58MHx8fHwxNzU4NzI3MjE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "brain network"
+    }
+  ]
+}
