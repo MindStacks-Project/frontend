@@ -35,7 +35,7 @@ export default function Home() {
                 A Retro Playground for Modern Minds
               </span>
               <h1 className="font-press text-3xl font-normal tracking-tighter text-foreground drop-shadow-sm sm:text-4xl lg:text-5xl">
-                Unlock the Power and Human Problem-Solving
+                Unlock the Power of Human Problem-Solving
               </h1>
               <p className="max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
                 MindStacks turns retro-inspired puzzles into a living lab. Play,
