@@ -5,7 +5,7 @@ import {
   appendTelemetryEvent,
   finalizeTelemetryAttempt,
   startTelemetryAttempt,
-} from "../telemetry";
+} from "../telemetry.ts";
 
 const metadata = {
   puzzleId: "sudoku-easy-fixture",
