@@ -1,58 +1,100 @@
 # MindStacks
 
-> **Class draft README** — explanatory, not the final product doc.  
-> Code is not live yet; this file communicates intent and how the MVP will be used in class.
+MindStacks is a retro-styled puzzle arcade that captures real problem-solving sessions to build better, more trustworthy AI. Players can experiment with Sudoku, Wordle, and Sokoban boards, review their performance, and optionally share anonymized telemetry that powers research-ready datasets and AI copilots.
 
 ---
 
-## 1. Project Overview
-**MindStacks** is a gamified puzzle platform. Players solve short logic/word/number puzzles, and the app records **how** they solve (moves, hints, errors, timing). With explicit consent, those traces are turned into **anonymized datasets** that are useful for AI/ML research.  
-**Value:** fun, rewarding practice for players; rare, process-level human reasoning data for researchers.
+## Overview
+- Next.js 15 (App Router) frontend written in TypeScript and Tailwind CSS.
+- Firebase Authentication (email/password + Google) with Firestore for future session data.
+- Genkit-powered Gemini flows that generate context-aware hints and validate submitted solutions.
+- Research-first instrumentation: anonymized telemetry, consent-aware exports, and developer tooling for validating privacy guarantees.
+- Responsive design optimized for desktop and tablet puzzle play with a retro aesthetic.
 
 ---
 
-## 2. Installation Instructions
-This repo is in the planning stage for class submission.
-
-1) Clone the repo.  
-2) Open the `/docs/` folder for the **MVP Product Spec** and diagrams (as they’re added).  
-3) No runtime required yet.
-
-> When code lands (Milestone 1), prerequisites will be **Node 20+** and (optionally) **PostgreSQL**. We’ll add simple `npm run dev` commands for local web/API.
+## Tech Stack
+- **Framework:** Next.js 15, React 19, App Router.
+- **Styling:** Tailwind CSS 4, shadcn/ui component primitives, custom retro theming.
+- **Auth & Data:** Firebase Auth + Firestore singletons, secure token hand-offs to the API tier.
+- **AI Tooling:** Google Genkit with Gemini 2.5 for hinting and solution validation flows.
+- **Testing:** `tsx --test`, Vitest-compatible assertions via Node’s built-in test runner.
 
 ---
 
-## 3. Usage Guide
-**What the MVP will do (at a glance):**
-- Choose a puzzle → make moves (we log steps) → optional hints (cost points) → submit → quick debrief (time, mistakes).
-- Clear privacy controls: age 13+ and a visible data-sharing toggle. You can play without sharing.
-- With consent, anonymized events appear in a small daily export used for classroom demos.
-
-**Class demo plan:** a 2–3 minute play session, a look at the anonymized event rows, and how that becomes a tiny training dataset.
+## Prerequisites
+- Node.js **20.x or newer** (preferably via [`nvm`](https://github.com/nvm-sh/nvm) or `asdf`).
+- npm **10+** (bundled with modern Node releases).
+- Firebase project credentials and a Gemini API key (see environment variables below).
 
 ---
 
-## 4. Configuration
-(Will be introduced once code is added.)
-- `DATA_SHARE_DEFAULT` (default `false`) — initial state of the consent toggle.  
-- `EXPORT_FORMAT` (`jsonl` or `parquet`) — classroom export format.  
-Sample `.env.example` files will be provided. No secrets or PII are committed.
+## Local Setup
+1. Clone the repo and install dependencies:
+   ```bash
+   git clone https://github.com/<org>/mindstacks.git
+   cd mindstacks/frontend
+   npm install
+   ```
+2. Copy `.env.local` (or create one) and populate the required values listed in the next section.
+3. Start the web app:
+   ```bash
+   npm run dev
+   ```
+   The development server uses Turbopack and runs on [http://localhost:3000](http://localhost:3000).
+
+For a production build, run `npm run build` followed by `npm run start`.
 
 ---
 
-## 5. Contributing Guidelines
-- Use GitHub Issues for tasks; one focused PR per change.  
-- Branch names: `feat/...`, `fix/...`, `docs/...`; short descriptive commits.  
-- Keep PRs small (~≤300 lines) and include a 1–2 sentence summary.  
-- Stick to MVP scope (3–4 puzzle types, nightly export). Bigger ideas → backlog.
+## Environment Variables
+Create a `.env.local` file in the project root with:
+
+| Name | Purpose |
+| ---- | ------- |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase project web API key. |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Auth domain from the Firebase console. |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID. |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase web app ID. |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | (Optional) Storage bucket used by Firestore/Storage rules. |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Sender ID for Firebase web clients. |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | (Optional) Analytics measurement ID. |
+| `NEXT_PUBLIC_API_BASE` | Optional override for the API origin when testing against a remote backend. |
+| `GEMINI_API_KEY` | Google Gemini key used by Genkit to generate hints and validate solutions. |
+
+Never commit the `.env.local` file—these secrets stay local or in your deployment platform’s secret manager.
 
 ---
 
-## 6. License
-**MIT (placeholder)** for classroom use. Final licensing will be decided before any external data sharing.
+## Development Workflow
+- `npm run dev` — Start the Next.js dev server with Turbopack.
+- `npm run build` — Production build (also validates that AI flows compile).
+- `npm run start` — Serve the production build locally.
+- `npm run typecheck` — Run TypeScript with `--noEmit` for CI-friendly safety.
 
 ---
 
-**Links**
-- MVP Product Spec (Concise v2): see class Canvas.
-- Questions: open an issue with the `question` label.
+## Running Tests
+The project uses Node’s native test runner via `tsx`. Unit tests live in `src/lib/__tests__`.
+
+```bash
+npm test
+```
+
+Add `--watch` to re-run relevant suites while you iterate:
+
+```bash
+npm test -- --watch
+```
+
+---
+
+## Additional Resources
+- Product blueprint and UX notes live in `docs/blueprint.md`.
+- Telemetry anonymization utilities and cohorts sit in `src/lib/telemetry.*`.
+- AI flows for hints and validation are defined in `src/ai/flows/`.
+
+---
+
+## License
+MIT (see `LICENSE.txt`). Final terms may change before external data sharing.
