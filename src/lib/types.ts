@@ -64,6 +64,7 @@ export type PuzzleAttempt = {
 export type LeaderboardEntry = {
   rank: number;
   nickname: string;
-  score: number;
+  gamesPlayed: number;
+  points: number;
   country?: string;
 }
