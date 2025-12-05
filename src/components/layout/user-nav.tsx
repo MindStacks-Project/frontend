@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { auth } from "@/lib/firebase.client";
 import { signOut } from "firebase/auth";
-
+import Link from "next/link";
 export function UserNav() {
   const router = useRouter();
   const { user } = useAuth();
@@ -78,10 +78,12 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <UserIcon className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+  <Link href="/profile" className="w-full cursor-pointer">
+    <UserIcon className="mr-2 h-4 w-4" />
+    <span>Profile</span>
+  </Link>
+</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
