@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, memo } from "react";
 import type { WordlePuzzle } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,10 @@ import { cn } from "@/lib/utils";
 import { usePuzzleTelemetry } from "@/hooks/use-telemetry";
 // IMPORT YOUR API LOGIC HERE
 import { getRandomWord, getWordList } from "@/lib/wordUtils";
+
+// --- NEW IMPORTS FOR SAVING DATA ---
+import { saveGameResult } from "@/lib/firebase.client";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 type LetterStatus = "correct" | "present" | "absent";
 type DisplayStatus = LetterStatus | "pending" | "empty";
@@ -141,7 +145,8 @@ interface WordleKeyboardProps {
   letterStatuses: Map<string, LetterStatus>;
 }
 
-function WordleKeyboard({ letterStatuses }: WordleKeyboardProps) {
+// Optimization: Memoize keyboard to prevent re-renders on every keystroke
+const WordleKeyboard = memo(function WordleKeyboard({ letterStatuses }: WordleKeyboardProps) {
   return (
     <div className="flex flex-col items-center gap-2">
       {KEYBOARD_ROWS.map((row) => (
@@ -164,13 +169,16 @@ function WordleKeyboard({ letterStatuses }: WordleKeyboardProps) {
       ))}
     </div>
   );
-}
+});
 
 export function WordleGame({ puzzle }: { puzzle: WordlePuzzle }) {
   // NEW STATE: Store the fetched word and the list of valid words
   const [fetchedSolution, setFetchedSolution] = useState<string>("");
   const [validWords, setValidWords] = useState<Set<string>>(new Set());
   const [loadingGame, setLoadingGame] = useState(true);
+
+  // --- NEW: Auth Hook to get current user ---
+  const { user } = useAuth();
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [evaluations, setEvaluations] = useState<LetterStatus[][]>([]);
@@ -187,8 +195,11 @@ export function WordleGame({ puzzle }: { puzzle: WordlePuzzle }) {
   useEffect(() => {
     const init = async () => {
       try {
-        const word = await getRandomWord();
-        const list = await getWordList();
+        // Optimization: Fetch both data sources in parallel
+        const [word, list] = await Promise.all([
+          getRandomWord(),
+          getWordList()
+        ]);
         
         setFetchedSolution(word.toUpperCase());
         // Store all valid 5-letter words in a Set for fast lookup
@@ -346,6 +357,24 @@ export function WordleGame({ puzzle }: { puzzle: WordlePuzzle }) {
           solution: targetWord,
         },
       });
+
+      // --- TRIGGER SAVE TO FIREBASE (WIN) ---
+      if (user) {
+        saveGameResult(user.uid, {
+            outcome: "won",
+            metrics: {
+                totalGuesses: nextGuesses.length,
+                durationSeconds: time,
+                guesses: nextGuesses
+            },
+            metadata: {
+                difficulty: puzzle.difficulty,
+                puzzleId: puzzle.id || "random",
+                solution: targetWord
+            }
+        });
+      }
+
     } else if (nextGuesses.length >= puzzle.maxGuesses) {
       setIsGameWon(false);
       stopTimer();
@@ -369,6 +398,23 @@ export function WordleGame({ puzzle }: { puzzle: WordlePuzzle }) {
         title: "Out of guesses",
         description: `The correct word was ${targetWord}.`,
       });
+
+      // --- TRIGGER SAVE TO FIREBASE (LOSS) ---
+      if (user) {
+        saveGameResult(user.uid, {
+            outcome: "failed",
+            metrics: {
+                totalGuesses: nextGuesses.length,
+                durationSeconds: time,
+                guesses: nextGuesses
+            },
+            metadata: {
+                difficulty: puzzle.difficulty,
+                puzzleId: puzzle.id || "random",
+                solution: targetWord
+            }
+        });
+      }
     }
   };
 
