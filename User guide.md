@@ -285,7 +285,7 @@ We are building this in the open. Send feedback anytime—your input directly sh
 
 ---
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Last Updated:** December 2025  
 **Next Review Date:** March 2026
 
