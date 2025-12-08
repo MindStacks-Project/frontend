@@ -5,7 +5,13 @@ import { getPuzzleById } from "@/lib/puzzles";
 import { SudokuGame } from "@/components/game/sudoku-game";
 import { WordleGame } from "@/components/game/wordle-game";
 import { SokobanGame } from "@/components/game/sokoban-game";
-import { isSokobanPuzzle, isSudokuPuzzle, isWordlePuzzle } from "@/lib/types";
+import { MemoryGame } from "@/components/game/memory-game";
+import {
+  isMemoryPuzzle,
+  isSokobanPuzzle,
+  isSudokuPuzzle,
+  isWordlePuzzle,
+} from "@/lib/types";
 
 type PlayPageProps = {
   params: {
@@ -41,6 +47,10 @@ export default function PlayPage({ params }: PlayPageProps) {
 
   if (isSokobanPuzzle(puzzle)) {
     return <SokobanGame puzzle={puzzle} />;
+  }
+
+  if (isMemoryPuzzle(puzzle)) {
+    return <MemoryGame puzzle={puzzle} />;
   }
 
   return (

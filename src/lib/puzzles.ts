@@ -85,7 +85,8 @@ const createMemoryPuzzle = (
   id: string,
   difficulty: PuzzleDifficulty,
   source: string,
-  seed: number
+  seed: number,
+  nextPuzzleId?: string
 ): MemoryPuzzle => {
   const settings = MEMORY_DIFFICULTY_SETTINGS[difficulty];
 
@@ -100,6 +101,7 @@ const createMemoryPuzzle = (
     timeLimitMs: settings.timeLimitMs,
     moveLimit: settings.moveLimit,
     deckSeed: `${id}-seed-${seed}`,
+    nextPuzzleId,
   };
 };
 
@@ -259,8 +261,20 @@ export const puzzles: Puzzle[] = [
     ],
     source: "Retro Vault",
   },
-  createMemoryPuzzle("memory-emoji-easy-1", "easy", "Emoji Archives", 2),
-  createMemoryPuzzle("memory-emoji-medium-1", "medium", "Emoji Archives", 7),
+  createMemoryPuzzle(
+    "memory-emoji-easy-1",
+    "easy",
+    "Emoji Archives",
+    2,
+    "memory-emoji-medium-1"
+  ),
+  createMemoryPuzzle(
+    "memory-emoji-medium-1",
+    "medium",
+    "Emoji Archives",
+    7,
+    "memory-emoji-hard-1"
+  ),
   createMemoryPuzzle("memory-emoji-hard-1", "hard", "Emoji Archives", 13),
 ];
 

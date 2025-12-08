@@ -2,18 +2,25 @@ import { Fragment } from "react";
 import { puzzles } from "@/lib/puzzles";
 import { PuzzleCard } from "@/components/puzzles/puzzle-card";
 import type { Puzzle } from "@/lib/types";
-import { isSokobanPuzzle, isSudokuPuzzle, isWordlePuzzle } from "@/lib/types";
+import {
+  isMemoryPuzzle,
+  isSokobanPuzzle,
+  isSudokuPuzzle,
+  isWordlePuzzle,
+} from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
 
 export default function PuzzlesPage() {
   const sudokuPuzzles = puzzles.filter(isSudokuPuzzle);
   const wordlePuzzles = puzzles.filter(isWordlePuzzle);
   const sokobanPuzzles = puzzles.filter(isSokobanPuzzle);
+  const memoryPuzzles = puzzles.filter(isMemoryPuzzle);
   const otherPuzzles = puzzles.filter(
     (puzzle) =>
       !isSudokuPuzzle(puzzle) &&
       !isWordlePuzzle(puzzle) &&
-      !isSokobanPuzzle(puzzle)
+      !isSokobanPuzzle(puzzle) &&
+      !isMemoryPuzzle(puzzle)
   );
 
   const renderPuzzleSection = (
@@ -47,6 +54,7 @@ export default function PuzzlesPage() {
       </div>
 
       <div className="flex flex-col gap-12">
+        {renderPuzzleSection("Memory", memoryPuzzles)}
         {renderPuzzleSection("Sokoban", sokobanPuzzles)}
         {renderPuzzleSection("Wordle", wordlePuzzles)}
         {renderPuzzleSection("Sudoku", sudokuPuzzles)}

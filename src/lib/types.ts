@@ -52,6 +52,7 @@ export type MemoryPuzzle = BasePuzzle & {
   timeLimitMs?: number;
   moveLimit?: number;
   deckSeed?: string;
+  nextPuzzleId?: string;
 };
 
 type UnsupportedPuzzle = BasePuzzle & {
