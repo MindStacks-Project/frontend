@@ -4,6 +4,9 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/favicon.svg",
+  },
   title: "MindStacks MVP",
   description: "A gamified puzzle platform for human problem-solving traces.",
 };
