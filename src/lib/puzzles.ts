@@ -282,6 +282,45 @@ export const puzzles: Puzzle[] = [
     "memory-emoji-hard-1"
   ),
   createMemoryPuzzle("memory-emoji-hard-1", "hard", "Emoji Archives", 13),
+  // Memory sequence launcher entries (appear in puzzles list)
+  {
+    id: "memory-sequence-easy-1",
+    type: "memory",
+    difficulty: "easy",
+    grid: { rows: 1, cols: 6 },
+    pairs: 6,
+    emojiPool: [],
+    timeLimitMs: 180000,
+    moveLimit: 0,
+    deckSeed: "memory-sequence-easy-1",
+    source: "Sequence Mode",
+    nextPuzzleId: "memory-sequence-medium-1",
+  },
+  {
+    id: "memory-sequence-medium-1",
+    type: "memory",
+    difficulty: "medium",
+    grid: { rows: 1, cols: 8 },
+    pairs: 8,
+    emojiPool: [],
+    timeLimitMs: 240000,
+    moveLimit: 0,
+    deckSeed: "memory-sequence-medium-1",
+    source: "Sequence Mode",
+    nextPuzzleId: "memory-sequence-hard-1",
+  },
+  {
+    id: "memory-sequence-hard-1",
+    type: "memory",
+    difficulty: "hard",
+    grid: { rows: 1, cols: 10 },
+    pairs: 10,
+    emojiPool: [],
+    timeLimitMs: 300000,
+    moveLimit: 0,
+    deckSeed: "memory-sequence-hard-1",
+    source: "Sequence Mode",
+  },
 ];
 
 export const getPuzzleById = (id: string): Puzzle | undefined => {
