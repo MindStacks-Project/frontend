@@ -5,7 +5,13 @@ export type User = {
 };
 
 export type PuzzleDifficulty = "easy" | "medium" | "hard";
-export type PuzzleType = "sudoku" | "wordle" | "sokoban" | "crossword" | "trivia";
+export type PuzzleType =
+  | "sudoku"
+  | "wordle"
+  | "sokoban"
+  | "memory"
+  | "crossword"
+  | "trivia";
 
 type BasePuzzle = {
   id: string;
@@ -33,11 +39,32 @@ export type SokobanPuzzle = BasePuzzle & {
   layout: string[];
 };
 
-type UnsupportedPuzzle = BasePuzzle & {
-  type: Exclude<PuzzleType, "sudoku" | "wordle" | "sokoban">;
+export type MemoryGrid = {
+  rows: number;
+  cols: number;
 };
 
-export type Puzzle = SudokuPuzzle | WordlePuzzle | SokobanPuzzle | UnsupportedPuzzle;
+export type MemoryPuzzle = BasePuzzle & {
+  type: "memory";
+  grid: MemoryGrid;
+  pairs: number;
+  emojiPool: string[];
+  timeLimitMs?: number;
+  moveLimit?: number;
+  deckSeed?: string;
+  nextPuzzleId?: string;
+};
+
+type UnsupportedPuzzle = BasePuzzle & {
+  type: Exclude<PuzzleType, "sudoku" | "wordle" | "sokoban" | "memory">;
+};
+
+export type Puzzle =
+  | SudokuPuzzle
+  | WordlePuzzle
+  | SokobanPuzzle
+  | MemoryPuzzle
+  | UnsupportedPuzzle;
 
 export const isSudokuPuzzle = (puzzle: Puzzle): puzzle is SudokuPuzzle =>
   puzzle.type === "sudoku";
@@ -47,6 +74,9 @@ export const isWordlePuzzle = (puzzle: Puzzle): puzzle is WordlePuzzle =>
 
 export const isSokobanPuzzle = (puzzle: Puzzle): puzzle is SokobanPuzzle =>
   puzzle.type === "sokoban";
+
+export const isMemoryPuzzle = (puzzle: Puzzle): puzzle is MemoryPuzzle =>
+  puzzle.type === "memory";
 
 export type PuzzleAttempt = {
   id: string;

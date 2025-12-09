@@ -1,4 +1,115 @@
-import type { Puzzle } from "@/lib/types";
+import type { Puzzle, PuzzleDifficulty, MemoryPuzzle } from "@/lib/types";
+
+type MemoryDifficultyConfig = {
+  grid: { rows: number; cols: number };
+  pairs: number;
+  timeLimitMs: number;
+  moveLimit: number;
+};
+
+const MEMORY_EMOJIS = [
+  "😀",
+  "😅",
+  "😂",
+  "🥲",
+  "😍",
+  "🤩",
+  "😎",
+  "😴",
+  "🤖",
+  "👾",
+  "🐶",
+  "🐱",
+  "🐼",
+  "🦊",
+  "🐸",
+  "🐙",
+  "🦄",
+  "🐝",
+  "🍎",
+  "🍊",
+  "🍋",
+  "🍉",
+  "🍇",
+  "🍓",
+  "🥝",
+  "🥑",
+  "🌶️",
+  "🌽",
+  "🍔",
+  "🍕",
+  "🍩",
+  "🥨",
+  "⚽",
+  "🏀",
+  "🏈",
+  "⚾",
+  "🎮",
+  "🎲",
+  "🎧",
+  "🚀",
+  "🛸",
+];
+
+const MEMORY_DIFFICULTY_SETTINGS: Record<PuzzleDifficulty, MemoryDifficultyConfig> = {
+  easy: {
+    grid: { rows: 3, cols: 4 },
+    pairs: 6,
+    timeLimitMs: 180000,
+    moveLimit: 40,
+  },
+  medium: {
+    grid: { rows: 4, cols: 6 },
+    pairs: 12,
+    timeLimitMs: 240000,
+    moveLimit: 65,
+  },
+  hard: {
+    grid: { rows: 7, cols: 8 },
+    pairs: 28,
+    timeLimitMs: 420000,
+    moveLimit: 110,
+  },
+};
+
+const selectEmojiPool = (count: number, seed: number): string[] => {
+  if (count > MEMORY_EMOJIS.length) {
+    throw new Error(
+      `Memory emoji pool exhausted: requested ${count} unique emojis but only ${MEMORY_EMOJIS.length} available.`
+    );
+  }
+
+  const pool: string[] = [];
+  for (let i = 0; i < count; i += 1) {
+    const emoji = MEMORY_EMOJIS[(seed + i) % MEMORY_EMOJIS.length];
+    pool.push(emoji);
+  }
+  return pool;
+};
+
+const createMemoryPuzzle = (
+  id: string,
+  difficulty: PuzzleDifficulty,
+  source: string,
+  seed: number,
+  nextPuzzleId?: string
+): MemoryPuzzle => {
+  const settings = MEMORY_DIFFICULTY_SETTINGS[difficulty];
+
+  return {
+    id,
+    type: "memory",
+    difficulty,
+    source,
+    grid: settings.grid,
+    pairs: settings.pairs,
+    emojiPool: selectEmojiPool(settings.pairs, seed),
+    timeLimitMs: settings.timeLimitMs,
+    moveLimit: settings.moveLimit,
+    deckSeed: `${id}-seed-${seed}`,
+    nextPuzzleId,
+  };
+};
 
 export const puzzles: Puzzle[] = [
   {
@@ -156,6 +267,21 @@ export const puzzles: Puzzle[] = [
     ],
     source: "Retro Vault",
   },
+  createMemoryPuzzle(
+    "memory-emoji-easy-1",
+    "easy",
+    "Emoji Archives",
+    2,
+    "memory-emoji-medium-1"
+  ),
+  createMemoryPuzzle(
+    "memory-emoji-medium-1",
+    "medium",
+    "Emoji Archives",
+    7,
+    "memory-emoji-hard-1"
+  ),
+  createMemoryPuzzle("memory-emoji-hard-1", "hard", "Emoji Archives", 13),
 ];
 
 export const getPuzzleById = (id: string): Puzzle | undefined => {

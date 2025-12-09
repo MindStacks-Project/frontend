@@ -25,7 +25,8 @@ MindStacks is a web app with a curated set of logic-first puzzles:
 - **Sudoku** — 9×9 number placement
 - **Wordle** — six-guess word deduction
 - **Sokoban** — grid-based box pushing
-- **Crossword/Memory Games/Trivia (coming soon)** — shown when a puzzle feed is available
+- **Emoji Memory** — grid of paired emojis with move/time limits
+- **Crossword/Trivia (coming soon)** — shown when a puzzle feed is available
 
 Sessions are optionally instrumented (with consent) to create anonymized datasets that power AI hinting and validation.
 
@@ -134,6 +135,30 @@ Sessions are optionally instrumented (with consent) to create anonymized dataset
 ### Upcoming Puzzles
 
 Crossword/Nonogram/Trivia appear as soon as their feeds are live. You will see "Loading soon" cards with a short description and ETA.
+
+### 4.4 Emoji Memory
+
+**Goal:** Reveal the grid of face-down cards, matching every emoji pair before you run out of moves or time.
+
+**Steps:**
+
+1. Choose a difficulty:
+   - *Easy* — 4×3 grid (6 pairs, generous limits)
+   - *Medium* — 6×4 grid (12 pairs)
+   - *Hard* — 7×8 grid (28 pairs, tight limits)
+2. Press **Start Game** (or **Play** from the catalog) to load a randomized deck seeded for fairness.
+3. Click/tap a card to flip it, then select a second card:
+   - If the emojis match, the pair locks in with a glow.
+   - If they mismatch, both cards flip back after a short delay.
+4. Track your stats in the right panel: elapsed time, remaining time, moves used, mismatches, and best streak.
+5. Use **Restart Round** at any time to reshuffle the deck (the attempt logs the restart count).
+6. When all pairs are matched, the summary dialog shows moves, time, and an option to jump to the next difficulty.
+
+**Limits & Scoring:**
+
+- Each difficulty enforces both a time limit and a move limit; exceeding either ends the run as failed.
+- Efficient matching (few mismatches, fast flips) yields better telemetry metrics and leaderboard points.
+- Telemetry captures memory-specific stats such as pairs matched, consecutive streaks, restart count, and board seed for research mode.
 
 ---
 
@@ -260,7 +285,7 @@ We are building this in the open. Send feedback anytime—your input directly sh
 
 ---
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Last Updated:** December 2025  
 **Next Review Date:** March 2026
 
