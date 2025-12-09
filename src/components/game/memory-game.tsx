@@ -199,7 +199,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       timeLimitMs: puzzle.timeLimitMs,
       moveLimit: puzzle.moveLimit,
       moveLimitRemaining: moveLimitRemaining ?? undefined,
-      boardSeed: puzzle.deckSeed,
+      deckSeed: puzzle.deckSeed,
       ...extra,
     }),
     [
