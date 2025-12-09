@@ -226,7 +226,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       setGameResult({ outcome, reason });
       stopTimer();
       logEvent(
-        outcome === "completed" ? "memory_game_completed" : "memory_game_failed",
+        outcome === "completed" ? "memory Game Completed" : "memory Game Failed",
         {
           outcome,
           reason,
