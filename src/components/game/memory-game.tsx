@@ -199,11 +199,12 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       timeLimitMs: puzzle.timeLimitMs,
       moveLimit: puzzle.moveLimit,
       moveLimitRemaining: moveLimitRemaining ?? undefined,
-      boardSeed: puzzle.deckSeed,
+      deckSeed: puzzle.deckSeed,
       ...extra,
     }),
     [
       averageFlipIntervalMs,
+      bestStreak,
       consecutiveMatches,
       matches,
       mismatches,
@@ -220,30 +221,56 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
   );
 
   const concludeGame = useCallback(
-    (outcome: "completed" | "failed", reason?: GameResult["reason"]) => {
+    (
+      outcome: "completed" | "failed",
+      reason?: GameResult["reason"],
+      statsOverrides?: {
+        moves?: number;
+        matches?: number;
+        mismatches?: number;
+        elapsedSeconds?: number;
+      }
+    ) => {
       if (finishedRef.current) return;
       finishedRef.current = true;
       setGameResult({ outcome, reason });
       stopTimer();
+      const finalMoves = statsOverrides?.moves ?? moves;
+      const finalMatches = statsOverrides?.matches ?? matches;
+      const finalMismatches = statsOverrides?.mismatches ?? mismatches;
+      const elapsedSeconds = statsOverrides?.elapsedSeconds ?? time;
       logEvent(
-        outcome === "completed" ? "memory Game Completed" : "memory Game Failed",
+        outcome === "completed" ? "Memory Game Completed" : "Memory Game Failed",
         {
           outcome,
           reason,
-          moves,
-          mismatches,
-          matches,
-          elapsedSeconds: time,
+          moves: finalMoves,
+          mismatches: finalMismatches,
+          matches: finalMatches,
+          elapsedSeconds,
         }
       );
-      finalizeAttempt({ outcome, metrics: buildMetrics({ reason }) });
+      finalizeAttempt({
+        outcome,
+        metrics: buildMetrics({
+          reason,
+          moves: finalMoves,
+          mismatches: finalMismatches,
+          pairsMatched: finalMatches,
+        }),
+      });
       if (outcome === "completed") {
         toast({
           title: "All pairs matched!",
-          description: `Solved in ${moves} moves and ${formatTime(time)}.`,
+          description: `Solved in ${finalMoves} moves and ${formatTime(elapsedSeconds)}.`,
         });
       } else {
-        const reasonCopy = reason === "time_limit" ? "Time limit reached" : "Move limit reached";
+        const reasonCopy =
+          reason === "time_limit"
+            ? "Time limit reached"
+            : reason === "move_limit"
+            ? "Move limit reached"
+            : "Round ended";
         toast({
           title: "Round over",
           description: reasonCopy,
@@ -255,6 +282,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       buildMetrics,
       finalizeAttempt,
       logEvent,
+      matches,
       mismatches,
       moves,
       stopTimer,
@@ -329,7 +357,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
 
   useEffect(() => {
     if (!puzzle.moveLimit || finishedRef.current) return;
-    if (moves >= puzzle.moveLimit) {
+    if (moves > puzzle.moveLimit) {
       concludeGame("failed", "move_limit");
     }
   }, [concludeGame, moves, puzzle.moveLimit]);
@@ -339,6 +367,10 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       setIsResolving(true);
       cleanupTimeout();
       flipTimeoutRef.current = setTimeout(() => {
+        if (finishedRef.current) {
+          flipTimeoutRef.current = null;
+          return;
+        }
         setDeck((current) =>
           current.map((card, idx) =>
             idx === firstIndex || idx === secondIndex
@@ -414,7 +446,12 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
           elapsedSeconds: time,
         });
         if (nextMatches === puzzle.pairs) {
-          concludeGame("completed");
+          concludeGame("completed", undefined, {
+            moves: nextMoves,
+            matches: nextMatches,
+            mismatches,
+            elapsedSeconds: time,
+          });
         }
       } else {
         setMismatches((prev) => prev + 1);

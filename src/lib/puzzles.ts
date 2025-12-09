@@ -73,6 +73,12 @@ const MEMORY_DIFFICULTY_SETTINGS: Record<PuzzleDifficulty, MemoryDifficultyConfi
 };
 
 const selectEmojiPool = (count: number, seed: number): string[] => {
+  if (count > MEMORY_EMOJIS.length) {
+    throw new Error(
+      `Memory emoji pool exhausted: requested ${count} unique emojis but only ${MEMORY_EMOJIS.length} available.`
+    );
+  }
+
   const pool: string[] = [];
   for (let i = 0; i < count; i += 1) {
     const emoji = MEMORY_EMOJIS[(seed + i) % MEMORY_EMOJIS.length];
