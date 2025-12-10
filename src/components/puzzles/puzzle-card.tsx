@@ -17,11 +17,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
-import { Puzzle as PuzzleIcon } from "lucide-react";
+import { Puzzle as PuzzleIcon, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PuzzleCardProps {
   puzzle: Puzzle;
+  isFavorite?: boolean;
+  isPending?: boolean;
+  onToggleFavorite?: (puzzle: Puzzle) => void;
 }
 
 const getPuzzleTitle = (puzzle: Puzzle): string => {
@@ -31,7 +34,12 @@ const getPuzzleTitle = (puzzle: Puzzle): string => {
   return puzzle.type.charAt(0).toUpperCase() + puzzle.type.slice(1);
 };
 
-export function PuzzleCard({ puzzle }: PuzzleCardProps) {
+export function PuzzleCard({
+  puzzle,
+  isFavorite = false,
+  isPending = false,
+  onToggleFavorite,
+}: PuzzleCardProps) {
   const difficultyColors = {
     easy: "bg-green-500 hover:bg-green-600",
     medium: "bg-yellow-500 hover:bg-yellow-600",
@@ -76,9 +84,24 @@ export function PuzzleCard({ puzzle }: PuzzleCardProps) {
       <CardContent className="flex-grow flex items-center justify-center">
         <PuzzleIcon className="w-24 h-24 text-muted" />
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-2">
         <Button asChild className="w-full">
           <Link href={`/play/${puzzle.id}`}>Play</Link>
+        </Button>
+        <Button
+          type="button"
+          variant={isFavorite ? "secondary" : "outline"}
+          className="w-full"
+          disabled={isPending}
+          onClick={() => onToggleFavorite?.(puzzle)}
+        >
+          <Star
+            className={cn(
+              "mr-2 h-4 w-4",
+              isFavorite ? "fill-yellow-400 text-yellow-500" : undefined
+            )}
+          />
+          {isFavorite ? "Saved" : "Save to Favorites"}
         </Button>
       </CardFooter>
     </Card>

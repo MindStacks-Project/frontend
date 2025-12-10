@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
@@ -14,6 +16,9 @@ import {
   isSudokuPuzzle,
   isWordlePuzzle,
 } from "@/lib/types";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useEffect, useMemo } from "react";
+import { recordRecentlyPlayed } from "@/lib/recently-played";
 
 type PlayPageProps = {
   params: {
@@ -23,6 +28,23 @@ type PlayPageProps = {
 
 export default function PlayPage({ params }: PlayPageProps) {
   const puzzle = getPuzzleById(params.puzzleId);
+  const { user } = useAuth();
+
+  const puzzleTitle = useMemo(() => {
+    if (!puzzle) return null;
+    if (isMemorySequencePuzzle(puzzle)) return "Memory Sequence";
+    if (isMemoryPuzzle(puzzle)) return "Memory Match";
+    return `${puzzle.type.charAt(0).toUpperCase()}${puzzle.type.slice(1)}`;
+  }, [puzzle]);
+
+  useEffect(() => {
+    if (!puzzle || !user?.uid) return;
+    recordRecentlyPlayed(user.uid, puzzle, puzzleTitle ?? undefined).catch(
+      (error) => {
+        console.error("Failed to record recently played puzzle", error);
+      }
+    );
+  }, [puzzle, puzzleTitle, user]);
 
   if (!puzzle) {
     return (
