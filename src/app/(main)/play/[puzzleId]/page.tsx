@@ -6,8 +6,10 @@ import { SudokuGame } from "@/components/game/sudoku-game";
 import { WordleGame } from "@/components/game/wordle-game";
 import { SokobanGame } from "@/components/game/sokoban-game";
 import { MemoryGame } from "@/components/game/memory-game";
+import { MemorySequenceGame } from "@/components/game/memory-sequence-game";
 import {
   isMemoryPuzzle,
+  isMemorySequencePuzzle,
   isSokobanPuzzle,
   isSudokuPuzzle,
   isWordlePuzzle,
@@ -47,6 +49,12 @@ export default function PlayPage({ params }: PlayPageProps) {
 
   if (isSokobanPuzzle(puzzle)) {
     return <SokobanGame puzzle={puzzle} />;
+  }
+
+  if (isMemorySequencePuzzle(puzzle)) {
+    return (
+      <MemorySequenceGame difficulty={puzzle.difficulty} puzzleId={puzzle.id} />
+    );
   }
 
   if (isMemoryPuzzle(puzzle)) {

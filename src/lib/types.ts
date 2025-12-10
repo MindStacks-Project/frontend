@@ -78,6 +78,10 @@ export const isSokobanPuzzle = (puzzle: Puzzle): puzzle is SokobanPuzzle =>
 export const isMemoryPuzzle = (puzzle: Puzzle): puzzle is MemoryPuzzle =>
   puzzle.type === "memory";
 
+export const isMemorySequencePuzzle = (puzzle: Puzzle): puzzle is MemoryPuzzle =>
+  puzzle.type === "memory" &&
+  (puzzle.source === "Sequence Mode" || String(puzzle.id).startsWith("memory-sequence"));
+
 export type PuzzleAttempt = {
   id: string;
   userId: string;
