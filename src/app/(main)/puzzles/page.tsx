@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment } from "react";
 import { puzzles } from "@/lib/puzzles";
 import { PuzzleCard } from "@/components/puzzles/puzzle-card";
@@ -14,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { difficultyInfo, recommendedDifficulty } from "@/lib/difficulty-info";
+import { useFavorites } from "@/hooks/use-favorites";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function PuzzlesPage() {
   const sudokuPuzzles = puzzles.filter(isSudokuPuzzle);
@@ -31,6 +35,9 @@ export default function PuzzlesPage() {
       !isMemoryPuzzle(puzzle)
   );
 
+  const { ids, pending, toggleFavorite } = useFavorites();
+  const { user } = useAuth();
+
   const renderPuzzleSection = (
     title: string,
     sectionPuzzles: Puzzle[]
@@ -45,7 +52,13 @@ export default function PuzzlesPage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {sectionPuzzles.map((puzzle) => (
-            <PuzzleCard key={puzzle.id} puzzle={puzzle} />
+            <PuzzleCard
+              key={puzzle.id}
+              puzzle={puzzle}
+              isFavorite={ids.has(puzzle.id)}
+              isPending={pending.has(puzzle.id)}
+              onToggleFavorite={() => toggleFavorite(puzzle, title)}
+            />
           ))}
         </div>
       </Fragment>
@@ -109,6 +122,11 @@ export default function PuzzlesPage() {
         {renderPuzzleSection("Sudoku", sudokuPuzzles)}
         {renderPuzzleSection("More Puzzles", otherPuzzles)}
       </div>
+      {!user && (
+        <div className="rounded-md border border-dashed border-muted-foreground/40 bg-muted/30 p-4 text-sm text-muted-foreground">
+          Log in to save puzzles to your favorites.
+        </div>
+      )}
     </div>
   );
 }

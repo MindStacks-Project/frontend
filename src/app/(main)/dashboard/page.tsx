@@ -1,12 +1,19 @@
+"use client";
+
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Target, Star, Trophy, Clock } from "lucide-react";
+import { Flame, Target, Star, Trophy, Clock, Bookmark } from "lucide-react";
+import { useFavorites } from "@/hooks/use-favorites";
+import { useRecentlyPlayed } from "@/hooks/use-recently-played";
+import { useMemo } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const stats = [
   {
@@ -60,6 +67,15 @@ const badges = [
 ];
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const { entries: favoriteEntries, loading: favoritesLoading } = useFavorites();
+  const { entries: recentEntries, loading: recentLoading } = useRecentlyPlayed(5);
+
+  const favoriteList = useMemo(
+    () => favoriteEntries.slice(0, 6),
+    [favoriteEntries]
+  );
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -104,6 +120,105 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="h-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <Bookmark className="h-5 w-5 text-muted-foreground" />
+              Favorites
+            </CardTitle>
+            {!user && (
+              <Badge variant="secondary" className="uppercase">
+                Sign in
+              </Badge>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {favoritesLoading ? (
+              <p className="text-sm text-muted-foreground">Loading favorites…</p>
+            ) : user && favoriteList.length > 0 ? (
+              <div className="space-y-2">
+                {favoriteList.map((fav) => (
+                  <div
+                    key={fav.puzzleId}
+                    className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium capitalize">
+                        {fav.title || fav.puzzleType}
+                      </span>
+                      <span className="text-xs text-muted-foreground capitalize">
+                        {fav.puzzleType} • {fav.difficulty}
+                      </span>
+                    </div>
+                    <Link href={`/play/${fav.puzzleId}`} className="text-primary text-xs underline">
+                      Play
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                {user
+                  ? "No favorites yet. Save puzzles from the Puzzles tab."
+                  : "Sign in to start saving your favorite puzzles."}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="h-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-semibold">Recently Played</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentLoading ? (
+              <p className="text-sm text-muted-foreground">Loading recent games…</p>
+            ) : user && recentEntries.length > 0 ? (
+              <div className="space-y-2">
+                {recentEntries.map((entry) => {
+                  const playedAt = entry.lastPlayed?.toDate?.();
+                  return (
+                    <div
+                      key={entry.puzzleId}
+                      className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium capitalize">
+                          {entry.title || entry.puzzleType}
+                        </span>
+                        <span className="text-xs text-muted-foreground capitalize">
+                          {entry.puzzleType} • {entry.difficulty}
+                          {playedAt
+                            ? ` • ${playedAt.toLocaleDateString()}`
+                            : ""}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Link href={`/play/${entry.puzzleId}`} className="text-primary text-xs underline">
+                          Resume
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                {user
+                  ? "Play a puzzle to see it here."
+                  : "Sign in to track your recent puzzles."}
+              </div>
+            )}
+            <div className="pt-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/puzzles">Browse Puzzles</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
