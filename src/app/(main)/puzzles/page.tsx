@@ -115,11 +115,11 @@ export default function PuzzlesPage() {
       </div>
 
       <div className="flex flex-col gap-12">
-        {renderPuzzleSection("Memory Match", memoryMatchPuzzles)}
-        {renderPuzzleSection("Memory Sequence", memorySequencePuzzles)}
         {renderPuzzleSection("Sokoban", sokobanPuzzles)}
+        {renderPuzzleSection("Memory Match", memoryMatchPuzzles)}
         {renderPuzzleSection("Wordle", wordlePuzzles)}
         {renderPuzzleSection("Sudoku", sudokuPuzzles)}
+        {renderPuzzleSection("Memory Sequence", memorySequencePuzzles)}
         {renderPuzzleSection("More Puzzles", otherPuzzles)}
       </div>
       {!user && (

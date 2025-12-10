@@ -135,18 +135,10 @@ export function MemorySequenceGame({
     playSequence(300);
   }, [cleanupPlayback, difficulty, length, playSequence, resetAttempt, resetTimer, startTimer, logEvent]);
 
-  const handleKey = useCallback((e: KeyboardEvent) => {
+  const handleInput = useCallback((dir: Direction) => {
     if (isPlayingBack || finishedRef.current) return;
-    const map: Record<string, Direction | undefined> = {
-      ArrowUp: "up",
-      ArrowDown: "down",
-      ArrowLeft: "left",
-      ArrowRight: "right",
-    };
-    const dir = map[e.key];
-    if (!dir) return;
-    e.preventDefault();
-    logEvent("key_pressed", { key: e.key, expected: sequence[playerIndex] });
+    logEvent("input_received", { direction: dir, expected: sequence[playerIndex] });
+    
     if (dir === sequence[playerIndex]) {
       const next = playerIndex + 1;
       setPlayerIndex(next);
@@ -167,6 +159,20 @@ export function MemorySequenceGame({
       playSequence(500);
     }
   }, [isPlayingBack, playerIndex, sequence, playSequence, logEvent, stopTimer, time, finalizeAttempt, mistakes, hintsUsed]);
+
+  const handleKey = useCallback((e: KeyboardEvent) => {
+    if (isPlayingBack || finishedRef.current) return;
+    const map: Record<string, Direction | undefined> = {
+      ArrowUp: "up",
+      ArrowDown: "down",
+      ArrowLeft: "left",
+      ArrowRight: "right",
+    };
+    const dir = map[e.key];
+    if (!dir) return;
+    e.preventDefault();
+    handleInput(dir);
+  }, [handleInput, isPlayingBack]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKey);
@@ -196,11 +202,15 @@ export function MemorySequenceGame({
     finalizeAttempt({ outcome: "failed", metrics: buildMetrics() });
   }, [buildMetrics, finalizeAttempt, hintsUsed, logEvent, mistakes, stopTimer, time]);
 
-  const arrowClass = (dir: Direction, idx: number) =>
-    cn(
-      "flex items-center justify-center h-20 w-20 rounded-md border",
-      highlightIndex === idx ? "bg-primary text-white" : "bg-muted"
+  const arrowClass = (dir: Direction) => {
+    const isActive = highlightIndex !== null && sequence[highlightIndex] === dir;
+    return cn(
+      "flex items-center justify-center h-20 w-20 rounded-md border transition-all duration-150 cursor-pointer active:scale-95",
+      isActive 
+        ? "bg-primary text-white shadow-[0_0_15px_rgba(var(--primary),0.6)] scale-105 border-primary" 
+        : "bg-muted hover:bg-muted/80"
     );
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
@@ -232,23 +242,23 @@ export function MemorySequenceGame({
           <div className="grid grid-cols-3 gap-2 justify-center items-center">
             <div />
             <div className={cn("flex items-center justify-center")}>{/* up */}
-              <div className={arrowClass("up", 0)}>{directionIcon("up")}</div>
+              <div role="button" onClick={() => handleInput("up")} className={arrowClass("up")}>{directionIcon("up")}</div>
             </div>
             <div />
 
             <div className={cn("flex items-center justify-center")}>{/* left */}
-              <div className={arrowClass("left", 1)}>{directionIcon("left")}</div>
+              <div role="button" onClick={() => handleInput("left")} className={arrowClass("left")}>{directionIcon("left")}</div>
             </div>
             <div className="flex items-center justify-center">{/* center */}
-              <div className="text-center">{playerIndex}/{sequence.length}</div>
+              <div className="text-center font-mono text-xl font-bold">{playerIndex}/{sequence.length}</div>
             </div>
             <div className={cn("flex items-center justify-center")}>{/* right */}
-              <div className={arrowClass("right", 2)}>{directionIcon("right")}</div>
+              <div role="button" onClick={() => handleInput("right")} className={arrowClass("right")}>{directionIcon("right")}</div>
             </div>
 
             <div />
             <div className={cn("flex items-center justify-center")}>{/* down */}
-              <div className={arrowClass("down", 3)}>{directionIcon("down")}</div>
+              <div role="button" onClick={() => handleInput("down")} className={arrowClass("down")}>{directionIcon("down")}</div>
             </div>
             <div />
           </div>

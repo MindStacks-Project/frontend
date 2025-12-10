@@ -17,17 +17,18 @@ import {
   isWordlePuzzle,
 } from "@/lib/types";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, use } from "react";
 import { recordRecentlyPlayed } from "@/lib/recently-played";
 
 type PlayPageProps = {
-  params: {
+  params: Promise<{
     puzzleId: string;
-  };
+  }>;
 };
 
 export default function PlayPage({ params }: PlayPageProps) {
-  const puzzle = getPuzzleById(params.puzzleId);
+  const { puzzleId } = use(params);
+  const puzzle = getPuzzleById(puzzleId);
   const { user } = useAuth();
 
   const puzzleTitle = useMemo(() => {

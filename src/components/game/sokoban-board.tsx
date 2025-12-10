@@ -42,46 +42,48 @@ export function SokobanBoard({
   const cols = grid[0]?.length ?? 0;
 
   return (
-    <div
-      className="grid gap-1 rounded-md border border-border bg-slate-950/70 p-2 shadow-inner"
-      style={{ gridTemplateColumns: `repeat(${cols}, 2.75rem)` }}
-    >
-      {grid.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          const key = coordinateKey(rowIndex, colIndex);
-          const isGoalCell = goals.has(key);
-          const hasBox = boxes.has(key);
-          const isPlayer =
-            player.row === rowIndex && player.col === colIndex;
+    <div className="w-full overflow-auto rounded-lg border border-border bg-slate-950/50 p-1">
+      <div
+        className="grid gap-1 p-2 w-max mx-auto"
+        style={{ gridTemplateColumns: `repeat(${cols}, 2.75rem)` }}
+      >
+        {grid.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const key = coordinateKey(rowIndex, colIndex);
+            const isGoalCell = goals.has(key);
+            const hasBox = boxes.has(key);
+            const isPlayer =
+              player.row === rowIndex && player.col === colIndex;
 
-          return (
-            <div
-              key={key}
-              className={cn(
-                "relative flex h-11 w-11 items-center justify-center rounded-sm border text-lg font-bold",
-                "transition-colors duration-150 ease-out",
-                getCellClass(cell, isGoalCell)
-              )}
-            >
-              {isGoalCell && (
-                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.9rem] text-purple-300/70">
-                  ✹
-                </span>
-              )}
-              {hasBox && (
-                <span className="pointer-events-none text-amber-300 drop-shadow-sm">
-                  {isGoalCell ? "★" : "▣"}
-                </span>
-              )}
-              {isPlayer && (
-                <span className="pointer-events-none text-cyan-200 drop-shadow-[0_0_4px_rgba(34,211,238,0.6)]">
-                  ☺
-                </span>
-              )}
-            </div>
-          );
-        })
-      )}
+            return (
+              <div
+                key={key}
+                className={cn(
+                  "relative flex h-11 w-11 items-center justify-center rounded-sm border text-lg font-bold",
+                  "transition-colors duration-150 ease-out",
+                  getCellClass(cell, isGoalCell)
+                )}
+              >
+                {isGoalCell && (
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[0.9rem] text-purple-300/70">
+                    ✹
+                  </span>
+                )}
+                {hasBox && (
+                  <span className="pointer-events-none text-amber-300 drop-shadow-sm">
+                    {isGoalCell ? "★" : "▣"}
+                  </span>
+                )}
+                {isPlayer && (
+                  <span className="pointer-events-none text-cyan-200 drop-shadow-[0_0_4px_rgba(34,211,238,0.6)]">
+                    ☺
+                  </span>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

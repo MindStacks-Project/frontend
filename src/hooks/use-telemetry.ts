@@ -40,6 +40,10 @@ export function usePuzzleTelemetry(options: TelemetryOptions) {
     downloadFilenameRef.current = downloadFilename;
   }, [downloadFilename]);
 
+  // Stabilize volatile object dependencies using JSON.stringify
+  const puzzleMetaJson = JSON.stringify(options.puzzleMeta);
+  const attemptContextJson = JSON.stringify(options.attemptContext);
+
   const metadata = useMemo<TelemetryMetadata>(
     () => ({
       puzzleId: options.puzzleId,
@@ -53,7 +57,7 @@ export function usePuzzleTelemetry(options: TelemetryOptions) {
       options.puzzleType,
       options.difficulty,
       options.source,
-      options.puzzleMeta,
+      puzzleMetaJson, // Stable dependency
     ]
   );
 
@@ -75,7 +79,7 @@ export function usePuzzleTelemetry(options: TelemetryOptions) {
     setAttemptIdState(attempt.id);
     finalizedRef.current = false;
     appendTelemetryEvent(attempt.id, "attempt_started", options.attemptContext);
-  }, [metadata, options.attemptContext, revokeDownloadUrl]);
+  }, [metadata, attemptContextJson, revokeDownloadUrl, options.attemptContext]);
 
   useEffect(() => {
     initializeAttempt();

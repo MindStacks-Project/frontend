@@ -112,6 +112,99 @@ const createMemoryPuzzle = (
 };
 
 export const puzzles: Puzzle[] = [
+  // 1. Sokoban
+  {
+    id: "sokoban-easy-1",
+    type: "sokoban",
+    difficulty: "easy",
+    layout: [
+      "  #####",
+      "###  .#",
+      "# $ $ #",
+      "# .@  #",
+      "###  .#",
+      "  #####",
+    ],
+    source: "Warehouse Classics",
+  },
+  {
+    id: "sokoban-medium-1",
+    type: "sokoban",
+    difficulty: "medium",
+    layout: [
+      " #######",
+      " #  .  #",
+      " # ##$##",
+      " #  $  #",
+      "##$#. .#",
+      "#   @  #",
+      "####### ",
+    ],
+    source: "Community Remix",
+  },
+  {
+    id: "sokoban-hard-1",
+    type: "sokoban",
+    difficulty: "hard",
+    layout: [
+      "#########",
+      "#.  #   #",
+      "#$$## #.#",
+      "# .@$ $ #",
+      "#  ##$  #",
+      "#..   ###",
+      "#########",
+    ],
+    source: "Retro Vault",
+  },
+
+  // 2. Memory Match
+  createMemoryPuzzle(
+    "memory-emoji-easy-1",
+    "easy",
+    "Emoji Archives",
+    2,
+    "memory-emoji-medium-1"
+  ),
+  createMemoryPuzzle(
+    "memory-emoji-medium-1",
+    "medium",
+    "Emoji Archives",
+    7,
+    "memory-emoji-hard-1"
+  ),
+  createMemoryPuzzle("memory-emoji-hard-1", "hard", "Emoji Archives", 13),
+
+  // 3. Wordle
+  {
+    id: "wordle-easy-1",
+    type: "wordle",
+    difficulty: "easy",
+    solution: "APPLE",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "Community",
+  },
+  {
+    id: "wordle-medium-1",
+    type: "wordle",
+    difficulty: "medium",
+    solution: "BRAVE",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "Instructor Picks",
+  },
+  {
+    id: "wordle-hard-1",
+    type: "wordle",
+    difficulty: "hard",
+    solution: "CRYPT",
+    wordLength: 5,
+    maxGuesses: 6,
+    source: "AI Generated",
+  },
+
+  // 4. Sudoku
   {
     id: "sudoku-easy-1",
     type: "sudoku",
@@ -196,93 +289,8 @@ export const puzzles: Puzzle[] = [
     ],
     source: "Puzzle Master",
   },
-  {
-    id: "wordle-easy-1",
-    type: "wordle",
-    difficulty: "easy",
-    solution: "APPLE",
-    wordLength: 5,
-    maxGuesses: 6,
-    source: "Community",
-  },
-  {
-    id: "wordle-medium-1",
-    type: "wordle",
-    difficulty: "medium",
-    solution: "BRAVE",
-    wordLength: 5,
-    maxGuesses: 6,
-    source: "Instructor Picks",
-  },
-  {
-    id: "wordle-hard-1",
-    type: "wordle",
-    difficulty: "hard",
-    solution: "CRYPT",
-    wordLength: 5,
-    maxGuesses: 6,
-    source: "AI Generated",
-  },
-  {
-    id: "sokoban-easy-1",
-    type: "sokoban",
-    difficulty: "easy",
-    layout: [
-      "  #####",
-      "###  .#",
-      "# $ $ #",
-      "# .@  #",
-      "###  .#",
-      "  #####",
-    ],
-    source: "Warehouse Classics",
-  },
-  {
-    id: "sokoban-medium-1",
-    type: "sokoban",
-    difficulty: "medium",
-    layout: [
-      " #######",
-      " #  .  #",
-      " # ##$##",
-      " #  $  #",
-      "##$#. .#",
-      "#   @  #",
-      "####### ",
-    ],
-    source: "Community Remix",
-  },
-  {
-    id: "sokoban-hard-1",
-    type: "sokoban",
-    difficulty: "hard",
-    layout: [
-      "#########",
-      "#.  #   #",
-      "#$$## #.#",
-      "# .@$ $ #",
-      "#  ##$  #",
-      "#..   ###",
-      "#########",
-    ],
-    source: "Retro Vault",
-  },
-  createMemoryPuzzle(
-    "memory-emoji-easy-1",
-    "easy",
-    "Emoji Archives",
-    2,
-    "memory-emoji-medium-1"
-  ),
-  createMemoryPuzzle(
-    "memory-emoji-medium-1",
-    "medium",
-    "Emoji Archives",
-    7,
-    "memory-emoji-hard-1"
-  ),
-  createMemoryPuzzle("memory-emoji-hard-1", "hard", "Emoji Archives", 13),
-  // Memory sequence launcher entries (appear in puzzles list)
+
+  // 5. Memory Sequence
   {
     id: "memory-sequence-easy-1",
     type: "memory",

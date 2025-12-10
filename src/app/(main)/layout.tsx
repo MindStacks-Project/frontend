@@ -52,7 +52,7 @@ export default function MainLayout({
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="none">
+      <Sidebar>
         <SidebarHeader>
           <Logo />
         </SidebarHeader>
