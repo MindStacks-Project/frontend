@@ -31,8 +31,19 @@ type GameResult = {
   reason?: "time_limit" | "move_limit";
 };
 
-const createDeckState = (puzzle: MemoryPuzzle): MemoryCardState[] => {
-  const seed = puzzle.deckSeed ?? puzzle.id;
+const generateRoundSeed = () => {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const createDeckState = (
+  puzzle: MemoryPuzzle,
+  roundSeed?: string
+): MemoryCardState[] => {
+  const baseSeed = puzzle.deckSeed ?? puzzle.id;
+  const seed = roundSeed ? `${baseSeed}:${roundSeed}` : baseSeed;
   const blueprint = buildMemoryDeck(puzzle.emojiPool, seed);
   return blueprint.map((card, index) => ({
     ...card,
@@ -103,7 +114,10 @@ const MemoryCard = ({
 export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
   const router = useRouter();
   const { toast } = useToast();
-  const [deck, setDeck] = useState<MemoryCardState[]>(() => createDeckState(puzzle));
+  const [roundSeed, setRoundSeed] = useState(() => generateRoundSeed());
+  const [deck, setDeck] = useState<MemoryCardState[]>(() =>
+    createDeckState(puzzle, roundSeed)
+  );
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [matches, setMatches] = useState(0);
@@ -295,7 +309,9 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
     (shouldIncrementRestart = false) => {
       cleanupTimeout();
       finishedRef.current = false;
-      setDeck(createDeckState(puzzle));
+      const newSeed = generateRoundSeed();
+      setRoundSeed(newSeed);
+      setDeck(createDeckState(puzzle, newSeed));
       setFlippedIndices([]);
       setMoves(0);
       setMatches(0);
@@ -324,6 +340,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
         pairs: puzzle.pairs,
         moveLimit: puzzle.moveLimit,
         timeLimitMs: puzzle.timeLimitMs,
+        roundSeed: newSeed,
       });
     },
     [
@@ -332,6 +349,7 @@ export function MemoryGame({ puzzle }: { puzzle: MemoryPuzzle }) {
       puzzle,
       resetAttempt,
       resetTimer,
+      setRoundSeed,
       startTimer,
     ]
   );
